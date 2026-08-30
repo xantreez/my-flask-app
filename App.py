@@ -165,3 +165,6 @@ def show_users():
 if __name__ == "__main__":
     create_database()
     app.run(debug=True)
+
+
+    create_database()
