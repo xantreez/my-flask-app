@@ -1,4 +1,4 @@
 Flask
-Flask-MySQLdb
-Werkzeug
+Flask-SQLAlchemy
 gunicorn
+Werkzeug
