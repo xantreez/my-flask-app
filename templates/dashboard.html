@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figma Course – Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <h2>Figma Course</h2>
+        <div>
+            <span>{{ user_name }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="welcome">
+            <h1>Салом, {{ user_name }}! 👋</h1>
+            <p>Дар ин ҷо шумо метавонед Figma-ро қадам ба қадам омӯзед.</p>
+        </section>
+
+        <h2>Урокҳои Figma</h2>
+        <div class="lessons">
+            {% for lesson in lessons %}
+                <div class="lesson-card">
+                    <h3>Lesson {{ lesson.id }}</h3>
+                    <h2>{{ lesson.title }}</h2>
+                    <p>{{ lesson.description }}</p>
+                    <a href="{{ url_for('lesson', lesson_id=lesson.id) }}">Оғози дарс</a>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

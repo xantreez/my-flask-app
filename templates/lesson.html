@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lesson.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <h2>Figma Course</h2>
+        <a href="{{ url_for('dashboard') }}">← Dashboard</a>
+    </nav>
+
+    <main class="lesson-page">
+        <div class="lesson-box">
+            <h1>{{ lesson.title }}</h1>
+            <p>{{ lesson.content }}</p>
+            <br>
+            <a href="{{ url_for('dashboard') }}">← Бозгашт ба урокҳо</a>
+        </div>
+    </main>
+</body>
+</html>

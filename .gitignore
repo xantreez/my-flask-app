@@ -1,0 +1,15 @@
+# Муҳити виртуалӣ (Env)
+env/
+venv/
+ENV/
+
+# Папкаҳои кэш ва пайтон
+__pycache__/
+*.pyc
+
+# Базаи додаҳо (агар хоҳӣ ба GitHub наравад)
+database.db
+
+# Настройкаҳои система ва VS Code
+.DS_Store
+.vscode/
