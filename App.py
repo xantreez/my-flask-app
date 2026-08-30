@@ -31,12 +31,15 @@ def create_database():
     conn.close()
 
 
+# Эҷоди автоматикии база ҳангоми оғози сервер дар Render
+create_database()
+
+
 # Декоратор барои санҷиши воридшавӣ ба система
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if "user_name" not in session:
-
             return redirect(url_for("login"))
         return f(*args, **kwargs)
 
@@ -146,7 +149,7 @@ def logout():
     return redirect(url_for("login"))
 
 
-# ---------------- RUN WEBSITE ----------------
+# ---------------- SHOW USERS ----------------
 @app.route("/users")
 def show_users():
     conn = sqlite3.connect("database.db")
@@ -154,17 +157,16 @@ def show_users():
     cursor.execute("SELECT id, username FROM users")
     users_list = cursor.fetchall()
     conn.close()
-    
+
     html = "<h1>Рӯйхати корбарон:</h1><ul>"
     for user in users_list:
         html += f"<li>ID: {user[0]} | Username: {user[1]}</li>"
     html += "</ul><a href='/dashboard'>← Бозгашт</a>"
-    
+
     return html
 
+
+# ---------------- RUN LOCAL ----------------
 if __name__ == "__main__":
     create_database()
     app.run(debug=True)
-
-
-    create_database()
