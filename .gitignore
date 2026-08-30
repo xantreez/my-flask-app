@@ -13,3 +13,4 @@ database.db
 # Настройкаҳои система ва VS Code
 .DS_Store
 .vscode/
+database.db
