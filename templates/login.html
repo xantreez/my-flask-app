@@ -1,11 +1,9 @@
-</body>
-</html>
 <!DOCTYPE html>
 <html lang="tj">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Воридшавӣ</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -13,11 +11,18 @@
         <h2>Welcome Back</h2>
         <p class="subtitle">Ба аккаунти худ дароед</p>
         
-       
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div style="color: #e52e71; margin-bottom: 15px; font-size: 14px; font-weight: bold;">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         <form action="/login" method="POST">
             <div class="input-group">
-                <input type="email" name="email" required placeholder=" ">
-                <label>Email</label>
+                <input type="text" name="username" required placeholder=" " autocomplete="off">
+                <label>Username (Номи корбар)</label>
             </div>
             <div class="input-group">
                 <input type="password" name="password" required placeholder=" ">
@@ -27,9 +32,8 @@
         </form>
 
         <p class="footer-text">
-            Аккаунт надоред? <a href="register.html">Registration</a>
+            Аккаунт надоред? <a href="{{ url_for('register') }}">Registration</a>
         </p>
     </div>
 </body>
-</html>
 </html>

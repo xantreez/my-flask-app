@@ -1,24 +1,38 @@
 <!DOCTYPE html>
-<html lang="tg">
-     
+<html lang="tj">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ lesson.title }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <nav>
-        <h2>Figma Course</h2>
-        <a href="{{ url_for('dashboard') }}">← Dashboard</a>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>Figma / Python Course</h2>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="nav-btn-back">← Dashboard</a>
+        </div>
     </nav>
-    <img src="{{ url_for('static', filename='xeb.jpg') }}" alt="Расм" style="max-width: 100%;">
 
     <main class="lesson-page">
         <div class="lesson-box">
-            <h1>{{ lesson.title }}</h1>
-            <p>{{ lesson.content }}</p>
-            <br>
-            <a href="{{ url_for('dashboard') }}">← Бозгашт ба урокҳо</a>
+            <div class="lesson-media">
+                <img src="{{ url_for('static', filename='xeb.jpg') }}" alt="Дарс" class="lesson-img">
+            </div>
+            
+            <div class="lesson-content">
+                <h1>{{ lesson.title }}</h1>
+                <hr class="divider">
+                <div class="lesson-text">
+                    <p>{{ lesson.content }}</p>
+                </div>
+                
+                <div class="lesson-footer">
+                    <a href="{{ url_for('dashboard') }}" class="btn-back-main">← Бозгашт ба дарсҳо</a>
+                </div>
+            </div>
         </div>
     </main>
 </body>
