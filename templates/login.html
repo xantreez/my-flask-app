@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Воридшавӣ</title>
+    <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="card">
         <h2>Welcome Back</h2>
         <p class="subtitle">Ба аккаунти худ дароед</p>
-        
+
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             {% for message in messages %}
-              <div style="color: #e52e71; margin-bottom: 15px; font-size: 14px; font-weight: bold;">{{ message }}</div>
+              <div style="color: #e52e71; margin-bottom: 15px; font-size: 14px;">{{ message }}</div>
             {% endfor %}
           {% endif %}
         {% endwith %}
-
+        
         <form action="/login" method="POST">
             <div class="input-group">
                 <input type="text" name="username" required placeholder=" " autocomplete="off">
-                <label>Username (Номи корбар)</label>
+                <label>Username</label>
             </div>
             <div class="input-group">
                 <input type="password" name="password" required placeholder=" ">
