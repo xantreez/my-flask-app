@@ -1,26 +1,27 @@
+Style · CSS
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
+ 
 /* ---------------- BACKGROUND ANIMATION ---------------- */
 body {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background: linear-gradient(-45deg, #1a103d, #3b1c6b, #7028e4, #e52e71);
     background-size: 400% 400%;
-    animation: gradientBG 16s ease infinite;
+    animation: gradientBG 18s ease infinite;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
-
+ 
 @keyframes gradientBG {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
-
+ 
 /* ---------------- LOGIN & REGISTER CARD ---------------- */
 .card {
     background: rgba(255, 255, 255, 0.95);
@@ -34,7 +35,7 @@ body {
     margin: auto;
     animation: popup 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
-
+ 
 @keyframes popup {
     0% {
         opacity: 0;
@@ -45,25 +46,25 @@ body {
         transform: scale(1) translateY(0);
     }
 }
-
+ 
 .card h2 {
     font-size: 28px;
     color: #2d3748;
     margin-bottom: 6px;
     font-weight: 700;
 }
-
+ 
 .subtitle {
     font-size: 14px;
     color: #718096;
     margin-bottom: 28px;
 }
-
+ 
 .input-group {
     position: relative;
     margin-bottom: 22px;
 }
-
+ 
 .input-group input {
     width: 100%;
     padding: 14px 16px;
@@ -74,7 +75,7 @@ body {
     transition: all 0.3s ease;
     background: transparent;
 }
-
+ 
 .input-group label {
     position: absolute;
     left: 16px;
@@ -88,12 +89,12 @@ body {
     padding: 0 6px;
     border-radius: 4px;
 }
-
+ 
 .input-group input:focus,
 .input-group input:not(:placeholder-shown) {
     border-color: #7028e4;
 }
-
+ 
 .input-group input:focus ~ label,
 .input-group input:not(:placeholder-shown) ~ label {
     top: 0;
@@ -101,7 +102,7 @@ body {
     color: #7028e4;
     font-weight: bold;
 }
-
+ 
 .btn {
     width: 100%;
     padding: 14px;
@@ -115,24 +116,24 @@ body {
     box-shadow: 0 4px 15px rgba(112, 40, 228, 0.4);
     transition: all 0.3s ease;
 }
-
+ 
 .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(112, 40, 228, 0.6);
 }
-
+ 
 .footer-text {
     margin-top: 24px;
     font-size: 14px;
     color: #718096;
 }
-
+ 
 .footer-text a {
     color: #7028e4;
     text-decoration: none;
     font-weight: bold;
 }
-
+ 
 /* ---------------- NAVBAR ---------------- */
 .navbar {
     background: rgba(255, 255, 255, 0.88);
@@ -146,13 +147,13 @@ body {
     top: 0;
     z-index: 100;
 }
-
+ 
 .nav-brand h2 {
     color: #2d3748;
     font-size: 22px;
     font-weight: 700;
 }
-
+ 
 .nav-btn-logout, .nav-btn-back {
     color: #7028e4;
     text-decoration: none;
@@ -162,13 +163,13 @@ body {
     border-radius: 8px;
     transition: all 0.3s ease;
 }
-
+ 
 .nav-btn-logout:hover, .nav-btn-back:hover {
     background: #7028e4;
     color: white;
     box-shadow: 0 4px 12px rgba(112, 40, 228, 0.3);
 }
-
+ 
 /* ---------------- DASHBOARD PAGE ---------------- */
 .dashboard-container {
     max-width: 1100px;
@@ -176,7 +177,7 @@ body {
     padding: 0 20px;
     width: 100%;
 }
-
+ 
 .dashboard-header {
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(10px);
@@ -186,24 +187,24 @@ body {
     margin-bottom: 30px;
     animation: fadeInDown 0.6s ease;
 }
-
+ 
 .dashboard-header h1 {
     color: #1a202c;
     font-size: 30px;
     margin-bottom: 8px;
 }
-
+ 
 .dashboard-header p {
     color: #4a5568;
     font-size: 16px;
 }
-
+ 
 .lessons-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 25px;
 }
-
+ 
 .lesson-card {
     background: #ffffff;
     border-radius: 16px;
@@ -215,12 +216,12 @@ body {
     justify-content: space-between;
     animation: fadeInUp 0.6s ease forwards;
 }
-
+ 
 .lesson-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
 }
-
+ 
 .badge {
     background: #edf2f7;
     color: #4a5568;
@@ -231,20 +232,20 @@ body {
     width: fit-content;
     margin-bottom: 12px;
 }
-
+ 
 .lesson-card h3 {
     color: #2d3748;
     font-size: 20px;
     margin-bottom: 10px;
 }
-
+ 
 .lesson-card p {
     color: #718096;
     font-size: 14px;
     line-height: 1.55;
     margin-bottom: 20px;
 }
-
+ 
 .btn-card {
     display: inline-block;
     text-align: center;
@@ -256,12 +257,12 @@ body {
     font-weight: 600;
     transition: all 0.3s ease;
 }
-
+ 
 .btn-card:hover {
     opacity: 0.95;
     box-shadow: 0 4px 15px rgba(229, 46, 113, 0.4);
 }
-
+ 
 /* ---------------- LESSON PAGE ---------------- */
 .lesson-page {
     max-width: 900px;
@@ -269,7 +270,7 @@ body {
     padding: 0 20px;
     width: 100%;
 }
-
+ 
 .lesson-box {
     background: #ffffff;
     border-radius: 20px;
@@ -277,50 +278,50 @@ body {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
     animation: popup 0.6s ease;
 }
-
+ 
 .lesson-media {
     width: 100%;
     max-height: 400px;
     overflow: hidden;
     background: #000;
 }
-
+ 
 .lesson-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
-
+ 
 .lesson-content {
     padding: 35px;
 }
-
+ 
 .lesson-content h1 {
     color: #1a202c;
     font-size: 30px;
     margin-bottom: 15px;
 }
-
+ 
 .divider {
     border: 0;
     height: 2px;
     background: linear-gradient(to right, #7028e4, #e52e71);
     margin-bottom: 25px;
 }
-
+ 
 .lesson-text p {
     color: #2d3748;
     font-size: 17px;
     line-height: 1.7;
     margin-bottom: 30px;
 }
-
+ 
 .lesson-footer {
     border-top: 1px solid #edf2f7;
     padding-top: 20px;
 }
-
+ 
 .btn-back-main {
     display: inline-block;
     color: #7028e4;
@@ -329,17 +330,17 @@ body {
     font-size: 15px;
     transition: color 0.2s ease;
 }
-
+ 
 .btn-back-main:hover {
     color: #e52e71;
 }
-
+ 
 /* ANIMATIONS */
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
+ 
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
