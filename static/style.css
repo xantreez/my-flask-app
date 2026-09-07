@@ -1,79 +1,88 @@
-Style · CSS
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
  
-/* ---------------- BACKGROUND ANIMATION ---------------- */
+:root {
+    --bg-deep: #0b0f1a;
+    --bg-mid: #10152a;
+    --accent-1: #6366f1;   /* indigo */
+    --accent-2: #22d3ee;   /* cyan */
+    --accent-3: #a855f7;   /* violet */
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    --card-bg: #ffffff;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+}
+ 
+/* ---------------- BACKGROUND ---------------- */
 body {
-    background: linear-gradient(-45deg, #1a103d, #3b1c6b, #7028e4, #e52e71);
-    background-size: 400% 400%;
-    animation: gradientBG 18s ease infinite;
+    background-color: var(--bg-deep);
+    background-image:
+        radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.25), transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(34, 211, 238, 0.18), transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.20), transparent 50%),
+        linear-gradient(180deg, var(--bg-deep), var(--bg-mid));
+    background-attachment: fixed;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-}
- 
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    color: var(--text-dark);
 }
  
 /* ---------------- LOGIN & REGISTER CARD ---------------- */
 .card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    padding: 45px 35px;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    background: var(--card-bg);
+    padding: 48px 38px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     width: 100%;
     max-width: 400px;
     text-align: center;
     margin: auto;
-    animation: popup 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    animation: popup 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
  
 @keyframes popup {
-    0% {
-        opacity: 0;
-        transform: scale(0.85) translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
  
 .card h2 {
-    font-size: 28px;
-    color: #2d3748;
+    font-size: 26px;
+    color: var(--text-dark);
     margin-bottom: 6px;
     font-weight: 700;
+    letter-spacing: -0.5px;
 }
  
 .subtitle {
     font-size: 14px;
-    color: #718096;
-    margin-bottom: 28px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
 }
  
 .input-group {
     position: relative;
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
  
 .input-group input {
     width: 100%;
     padding: 14px 16px;
-    border: 2px solid #e2e8f0;
+    border: 1.5px solid #e2e8f0;
     border-radius: 10px;
     outline: none;
     font-size: 15px;
-    transition: all 0.3s ease;
-    background: transparent;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: #f8fafc;
+    color: var(--text-dark);
 }
  
 .input-group label {
@@ -81,93 +90,106 @@ body {
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: #a0aec0;
+    color: var(--text-light);
     font-size: 15px;
     pointer-events: none;
-    transition: all 0.3s ease;
-    background: #ffffff;
+    transition: all 0.2s ease;
+    background: #f8fafc;
     padding: 0 6px;
     border-radius: 4px;
 }
  
 .input-group input:focus,
 .input-group input:not(:placeholder-shown) {
-    border-color: #7028e4;
+    border-color: var(--accent-1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    background: #ffffff;
 }
  
 .input-group input:focus ~ label,
 .input-group input:not(:placeholder-shown) ~ label {
     top: 0;
     font-size: 12px;
-    color: #7028e4;
-    font-weight: bold;
+    color: var(--accent-1);
+    font-weight: 600;
+    background: #ffffff;
 }
  
 .btn {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #7028e4 0%, #e52e71 100%);
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
     color: white;
     border: none;
     border-radius: 10px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(112, 40, 228, 0.4);
-    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
  
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(112, 40, 228, 0.6);
+    box-shadow: 0 12px 28px rgba(99, 102, 241, 0.5);
 }
  
 .footer-text {
     margin-top: 24px;
     font-size: 14px;
-    color: #718096;
+    color: var(--text-muted);
 }
  
 .footer-text a {
-    color: #7028e4;
+    color: var(--accent-1);
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
+}
+ 
+.footer-text a:hover {
+    text-decoration: underline;
 }
  
 /* ---------------- NAVBAR ---------------- */
 .navbar {
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(12px);
+    background: rgba(15, 20, 40, 0.75);
+    backdrop-filter: blur(16px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 16px 40px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     position: sticky;
     top: 0;
     z-index: 100;
 }
  
 .nav-brand h2 {
-    color: #2d3748;
-    font-size: 22px;
+    color: #ffffff;
+    font-size: 20px;
     font-weight: 700;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
  
 .nav-btn-logout, .nav-btn-back {
-    color: #7028e4;
+    color: #e2e8f0;
     text-decoration: none;
     font-weight: 600;
+    font-size: 14px;
     padding: 8px 18px;
-    border: 2px solid #7028e4;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
  
 .nav-btn-logout:hover, .nav-btn-back:hover {
-    background: #7028e4;
+    background: var(--accent-1);
+    border-color: var(--accent-1);
     color: white;
-    box-shadow: 0 4px 12px rgba(112, 40, 228, 0.3);
 }
  
 /* ---------------- DASHBOARD PAGE ---------------- */
@@ -179,52 +201,53 @@ body {
 }
  
 .dashboard-header {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-lg);
     margin-bottom: 30px;
-    animation: fadeInDown 0.6s ease;
+    animation: fadeInDown 0.5s ease;
 }
  
 .dashboard-header h1 {
-    color: #1a202c;
-    font-size: 30px;
+    color: #ffffff;
+    font-size: 28px;
     margin-bottom: 8px;
+    letter-spacing: -0.5px;
 }
  
 .dashboard-header p {
-    color: #4a5568;
-    font-size: 16px;
+    color: var(--text-light);
+    font-size: 15px;
 }
  
 .lessons-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 25px;
+    gap: 22px;
 }
  
 .lesson-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    animation: fadeInUp 0.6s ease forwards;
+    animation: fadeInUp 0.5s ease forwards;
 }
  
 .lesson-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
 }
  
 .badge {
-    background: #edf2f7;
-    color: #4a5568;
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--accent-1);
     font-size: 12px;
     font-weight: 700;
     padding: 4px 12px;
@@ -234,13 +257,14 @@ body {
 }
  
 .lesson-card h3 {
-    color: #2d3748;
-    font-size: 20px;
+    color: var(--text-dark);
+    font-size: 19px;
     margin-bottom: 10px;
+    font-weight: 600;
 }
  
 .lesson-card p {
-    color: #718096;
+    color: var(--text-muted);
     font-size: 14px;
     line-height: 1.55;
     margin-bottom: 20px;
@@ -249,18 +273,19 @@ body {
 .btn-card {
     display: inline-block;
     text-align: center;
-    background: linear-gradient(135deg, #7028e4 0%, #e52e71 100%);
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
     color: white;
     text-decoration: none;
     padding: 12px;
     border-radius: 8px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    font-size: 14px;
+    transition: opacity 0.2s ease, box-shadow 0.2s ease;
 }
  
 .btn-card:hover {
-    opacity: 0.95;
-    box-shadow: 0 4px 15px rgba(229, 46, 113, 0.4);
+    opacity: 0.92;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
 }
  
 /* ---------------- LESSON PAGE ---------------- */
@@ -272,16 +297,16 @@ body {
 }
  
 .lesson-box {
-    background: #ffffff;
-    border-radius: 20px;
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    animation: popup 0.6s ease;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    animation: popup 0.5s ease;
 }
  
 .lesson-media {
     width: 100%;
-    max-height: 400px;
+    max-height: 380px;
     overflow: hidden;
     background: #000;
 }
@@ -294,25 +319,26 @@ body {
 }
  
 .lesson-content {
-    padding: 35px;
+    padding: 34px;
 }
  
 .lesson-content h1 {
-    color: #1a202c;
-    font-size: 30px;
+    color: var(--text-dark);
+    font-size: 28px;
     margin-bottom: 15px;
+    letter-spacing: -0.5px;
 }
  
 .divider {
     border: 0;
     height: 2px;
-    background: linear-gradient(to right, #7028e4, #e52e71);
+    background: linear-gradient(to right, var(--accent-1), var(--accent-3));
     margin-bottom: 25px;
 }
  
 .lesson-text p {
-    color: #2d3748;
-    font-size: 17px;
+    color: #334155;
+    font-size: 16.5px;
     line-height: 1.7;
     margin-bottom: 30px;
 }
@@ -324,24 +350,25 @@ body {
  
 .btn-back-main {
     display: inline-block;
-    color: #7028e4;
+    color: var(--accent-1);
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
     font-size: 15px;
     transition: color 0.2s ease;
 }
  
 .btn-back-main:hover {
-    color: #e52e71;
+    color: var(--accent-3);
 }
  
-/* ANIMATIONS */
+/* ---------------- ANIMATIONS ---------------- */
 @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
+    from { opacity: 0; transform: translateY(-16px); }
     to { opacity: 1; transform: translateY(0); }
 }
  
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
 }
+ 
