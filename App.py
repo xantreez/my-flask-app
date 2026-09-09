@@ -678,7 +678,6 @@
 #     app.run(debug=True)
 
 
-
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -686,11 +685,10 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
 
-# Нишонии пайвастшавӣ ба базаи Render
-# Агар дар Render муҳити DATABASE_URL бошад, онро мегирад, вагарна пайванди мустақимро истифода мебарад
+# Пайвастшавӣ ба базаи Render (бо SSL ва юзери дуруст)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL',
-    'postgresql://pythonfigdb_8bw9_user:2T4CEtZNNcvdVzv0Z2rLf0mmDkQZ3oYf@dpg-dagnt8fqj5pc739pkg60-a.virginia-postgres.render.com/python_fig_db'
+    'postgresql://python_fig_db_user:2T4CEtZNNcvdVzv0Z2rLf0mmDkQZ3oYf@dpg-dagnt8fqj5pc739pkg60-a.virginia-postgres.render.com/python_fig_db?sslmode=require'
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -707,7 +705,7 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
-# Автоматикӣ эҷод кардани ҷадвалҳо ҳангоми оғози код
+# Сохтани автоматикии ҷадвал дар база
 with app.app_context():
     db.create_all()
 
