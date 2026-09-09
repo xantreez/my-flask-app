@@ -12,16 +12,17 @@
             <h2>Figma / Python Course</h2>
         </div>
         <div class="nav-links">
+            <a href="{{ url_for('show_users') }}" class="nav-btn-back" style="margin-right: 12px;">👥 Корбарон</a>
             <a href="{{ url_for('logout') }}" class="nav-btn-logout">Баромад</a>
         </div>
     </nav>
-
+ 
     <main class="dashboard-container">
         <header class="dashboard-header">
             <h1>Хуш омадед, {{ user_name }}! 👋</h1>
             <p>Дарсҳоро интихоб кунед ва ба омӯзиш оғоз намоед.</p>
         </header>
-
+ 
         <div class="lessons-grid">
             {% for lesson in lessons %}
             <div class="lesson-card">

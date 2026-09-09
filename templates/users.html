@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tj">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рӯйхати корбарон</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .users-page {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+        .users-box {
+            background: var(--card-bg, #ffffff);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+        .users-box h1 {
+            color: #1a202c;
+            font-size: 26px;
+            margin-bottom: 4px;
+        }
+        .users-count {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 14px;
+            font-size: 14px;
+        }
+        thead th {
+            color: #64748b;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #edf2f7;
+        }
+        tbody tr {
+            border-bottom: 1px solid #edf2f7;
+            transition: background 0.15s ease;
+        }
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+        tbody td:first-child {
+            color: #94a3b8;
+            font-weight: 600;
+            width: 60px;
+        }
+        tbody td:nth-child(2) {
+            color: #1a202c;
+            font-weight: 600;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: #94a3b8;
+        }
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+        .search-box:focus {
+            border-color: #6366f1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h2>Figma / Python Course</h2>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}" class="nav-btn-back">← Dashboard</a>
+        </div>
+    </nav>
+ 
+    <main class="users-page">
+        <div class="users-box">
+            <h1>👥 Рӯйхати корбарон</h1>
+            <p class="users-count">Ҳамагӣ {{ users|length }} корбар сабти ном кардааст</p>
+ 
+            {% if users|length > 0 %}
+            <input type="text" class="search-box" id="searchInput" placeholder="Ҷустуҷӯи корбар...">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username / Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">Ҳанӯз ҳеҷ кас сабти ном накардааст.</div>
+            {% endif %}
+        </div>
+    </main>
+ 
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const filter = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#usersTable tbody tr');
+                rows.forEach(row => {
+                    const username = row.children[1].textContent.toLowerCase();
+                    row.style.display = username.includes(filter) ? '' : 'none';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
+ 
