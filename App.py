@@ -677,7 +677,6 @@
 # if __name__ == "__main__":
 #     app.run(debug=True)
 
-
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
@@ -685,7 +684,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
 
-# Пайвастшавӣ ба базаи Render (бо SSL ва юзери дуруст)
+# Пайвастшавӣ ба базаи Render бо SSL ва юзернейми дуруст
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL',
     'postgresql://python_fig_db_user:2T4CEtZNNcvdVzv0Z2rLf0mmDkQZ3oYf@dpg-dagnt8fqj5pc739pkg60-a.virginia-postgres.render.com/python_fig_db?sslmode=require'
@@ -705,7 +704,7 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
-# Сохтани автоматикии ҷадвал дар база
+# Эҷоди автоматикии ҷадвалҳо
 with app.app_context():
     db.create_all()
 
