@@ -530,33 +530,33 @@ from flask import (
     url_for,
 )
 from flask_sqlalchemy import SQLAlchemy
- 
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "secret_key_pro")
- 
+
 # ---------------- DATABASE CONFIG ----------------
 database_url = os.environ.get("DATABASE_URL", "sqlite:///database.db")
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
- 
+
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
- 
+
 db = SQLAlchemy(app)
- 
- 
+
+
 # ---------------- MODEL ----------------
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
- 
- 
+
+
 with app.app_context():
     db.create_all()
- 
- 
+
+
 # ---------------- LOGIN DECORATOR ----------------
 def login_required(f):
     @wraps(f)
@@ -564,35 +564,18 @@ def login_required(f):
         if "user_name" not in session:
             return redirect(url_for("login"))
         return f(*args, **kwargs)
- 
+
     return decorated_function
- 
- 
+
+
 # ---------------- LOGIN / REGISTER ----------------
 @app.route("/", methods=["GET", "POST"])
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
- 
-        user = User.query.filter_by(username=username, password=password).first()
- 
-        if user:
-            session["user_name"] = username
-            return redirect(url_for("dashboard"))
-        else:
-            flash("Номи корбар ё парол нодуруст аст!")
- 
-    return render_template("login.html")
- 
- 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
- 
+
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             flash("Ин номи корбар аллакай мавҷуд аст!")
@@ -600,12 +583,28 @@ def register():
             new_user = User(username=username, password=password)
             db.session.add(new_user)
             db.session.commit()
- 
             return redirect(url_for("login"))
- 
+
     return render_template("register.html")
- 
- 
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(username=username, password=password).first()
+
+        if user:
+            session["user_name"] = username
+            return redirect(url_for("dashboard"))
+        else:
+            flash("Номи корбар ё парол нодуруст аст!")
+
+    return render_template("login.html")
+
+
 # ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
 @login_required
@@ -630,8 +629,8 @@ def dashboard():
     return render_template(
         "dashboard.html", lessons=lessons, user_name=session["user_name"]
     )
- 
- 
+
+
 # ---------------- LESSON ----------------
 @app.route("/lesson/<int:lesson_id>")
 @login_required
@@ -657,25 +656,23 @@ def lesson(lesson_id):
     if not selected_lesson:
         return redirect(url_for("dashboard"))
     return render_template("lesson.html", lesson=selected_lesson)
- 
- 
+
+
 # ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
- 
- 
+
+
 # ---------------- SHOW USERS ----------------
 @app.route("/users")
 @login_required
 def show_users():
     users_list = User.query.order_by(User.id.desc()).all()
     return render_template("users.html", users=users_list)
- 
- 
+
+
 # ---------------- RUN LOCAL ----------------
 if __name__ == "__main__":
     app.run(debug=True)
-
- 
