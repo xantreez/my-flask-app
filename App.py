@@ -693,8 +693,16 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "secret_key_pro")
  
-# ---------------- DATABASE CONFIG ----------------
+# ---------------------------------------------------------
+# Database configuration
+# Render provides DATABASE_URL automatically once a PostgreSQL
+# instance is attached. Locally (no DATABASE_URL set), the app
+# falls back to a SQLite file so it still works for development.
+# ---------------------------------------------------------
 database_url = os.environ.get("DATABASE_URL", "sqlite:///database.db")
+ 
+# Render's DATABASE_URL starts with "postgres://" but SQLAlchemy
+# requires "postgresql://" — this line fixes that automatically.
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
  
@@ -703,8 +711,14 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
  
 db = SQLAlchemy(app)
  
+# The only account allowed to view the /users admin page.
+# Set this in Render's Environment tab — never hardcode it here.
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")
  
-# ---------------- MODEL ----------------
+ 
+# ---------------------------------------------------------
+# Database model
+# ---------------------------------------------------------
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
@@ -716,7 +730,9 @@ with app.app_context():
     db.create_all()
  
  
-# ---------------- LOGIN DECORATOR ----------------
+# ---------------------------------------------------------
+# Access control decorators
+# ---------------------------------------------------------
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -727,8 +743,41 @@ def login_required(f):
     return decorated_function
  
  
-# ---------------- LOGIN / REGISTER ----------------
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_name" not in session:
+            return redirect(url_for("login"))
+        if not ADMIN_USERNAME or session["user_name"] != ADMIN_USERNAME:
+            return redirect(url_for("dashboard"))
+        return f(*args, **kwargs)
+ 
+    return decorated_function
+ 
+ 
+# ---------------------------------------------------------
+# Auth routes — Register is the landing page, Login is separate
+# ---------------------------------------------------------
 @app.route("/", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+ 
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            flash("This username already exists!")
+        else:
+            new_user = User(username=username, password=password)
+            db.session.add(new_user)
+            db.session.commit()
+            flash("Account created successfully. Please log in.")
+            return redirect(url_for("login"))
+ 
+    return render_template("register.html")
+ 
+ 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -741,309 +790,298 @@ def login():
             session["user_name"] = username
             return redirect(url_for("dashboard"))
         else:
-            flash("Номи корбар ё парол нодуруст аст!")
+            flash("Incorrect username or password!")
  
     return render_template("login.html")
  
  
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
- 
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            flash("Ин номи корбар аллакай мавҷуд аст!")
-        else:
-            new_user = User(username=username, password=password)
-            db.session.add(new_user)
-            db.session.commit()
- 
-            return redirect(url_for("login"))
- 
-    return render_template("register.html")
- 
- 
-# ---------------- DASHBOARD ----------------
-@app.route("/dashboard")
-@login_required
-def dashboard():
-    lessons = [
-        {"id": 1, "title": "What is Figma?", "description": "Introduction to Figma and cloud-based design."},
-        {"id": 2, "title": "Figma Tools", "description": "Overview of essential UI elements and toolbars."},
-        {"id": 3, "title": "Frame and Layout", "description": "Organize screens and device templates effectively."},
-        {"id": 4, "title": "Components", "description": "Create reusable design assets and UI kits."},
-        {"id": 5, "title": "Prototype", "description": "Learn how to make your design interactive."},
-        {"id": 6, "title": "Shapes & Pen Tool", "description": "Create custom vector graphics and icons."},
-        {"id": 7, "title": "Text & Typography", "description": "Work with fonts, line heights, and text styles."},
-        {"id": 8, "title": "Auto Layout Basics", "description": "Build dynamic, flexible responsive UI components."},
-        {"id": 9, "title": "Colors & Styles", "description": "Manage global design system colors and shadows."},
-        {"id": 10, "title": "Exporting Assets", "description": "Export assets and prepare design for developers."},
-        {"id": 11, "title": "Advanced Prototyping", "description": "Smart animate, interactive overlays, and scrolling."},
-        {"id": 12, "title": "Design Systems", "description": "Building and publishing Figma library UI components."},
-        {"id": 13, "title": "UI Animation", "description": "Micro-interactions and motion design in Figma."},
-        {"id": 14, "title": "Responsive Layouts", "description": "Designing for Mobile, Tablet, and Desktop screens."},
-        {"id": 15, "title": "Final Portfolio Project", "description": "Creating a complete real-world mobile app UI design."}
-    ]
-    return render_template(
-        "dashboard.html", lessons=lessons, user_name=session["user_name"]
-    )
- 
- 
-# ---------------- LESSON ----------------
-@app.route("/lesson/<int:lesson_id>")
-@login_required
-def lesson(lesson_id):
-    lessons = {
-        1: {
-            "title": "What is Figma?",
-            "time": "10 дақиқа",
-            "intro": "Figma is a cloud-based UI/UX design and prototyping tool used by teams around the world to design apps and websites collaboratively in real time.",
-            "objectives": [
-                "Тавзеҳ диҳед, ки Figma чист ва барои чӣ истифода мешавад",
-                "Фарқияти он аз абзорҳои дигари дизайн (масалан Photoshop)-ро фаҳмед",
-                "Интерфейси асосии Figma-ро шинос шавед"
-            ],
-            "takeaways": [
-                "Figma дар браузер кор мекунад — ниёз ба насб нест",
-                "Якчанд нафар метавонанд ҳамзамон дар як файл кор кунанд",
-                "Файлҳо худкор дар cloud захира мешаванд"
-            ]
-        },
-        2: {
-            "title": "Figma Tools",
-            "time": "12 дақиқа",
-            "intro": "Learn the essential toolbar: Move, Scale, Frame, Section, Shape, Pen, and Text tools that form the foundation of every design.",
-            "objectives": [
-                "Абзорҳои асосии toolbar-ро номбар кунед",
-                "Фарқияти Move ва Scale tool-ро фаҳмед",
-                "Кай кадом абзорро истифода баред донед"
-            ],
-            "takeaways": [
-                "Ҳар абзор кнопкаи миёнбур (shortcut) дорад — истифодаи онҳо суръатро зиёд мекунад",
-                "Frame tool барои сохтани экранҳо асос аст",
-                "Pen tool барои шаклҳои мураккаб истифода мешавад"
-            ]
-        },
-        3: {
-            "title": "Frame and Layout",
-            "time": "12 дақиқа",
-            "intro": "Frames act as screen containers that organize your design and let you build responsive layouts for different device sizes.",
-            "objectives": [
-                "Фарқияти Frame ва Group-ро фаҳмед",
-                "Андозаҳои стандартии device (mobile, tablet, desktop)-ро донед",
-                "Layout-и экранҳоро мураттаб созед"
-            ],
-            "takeaways": [
-                "Frame метавонад дигар Frame-ҳоро дар дохили худ дошта бошад",
-                "Presets барои андозаҳои маъмултарин мавҷуданд",
-                "Номгузории дурусти frame-ҳо кори дастаҷамъиро осон мекунад"
-            ]
-        },
-        4: {
-            "title": "Components",
-            "time": "15 дақиқа",
-            "intro": "Components let you create reusable design elements — build once, use everywhere, and update all instances at the same time.",
-            "objectives": [
-                "Фарқияти Master Component ва Instance-ро фаҳмед",
-                "Компоненти истифодашавандаро эҷод кунед",
-                "Тағйиротро дар як ҷо кунед, то дар ҳама ҷо иваз шавад"
-            ],
-            "takeaways": [
-                "Тағйирот дар Master ба ҳамаи Instance-ҳо таъсир мекунад",
-                "Instance-ҳоро метавон бе вайрон кардани Master фардикунонӣ кард",
-                "Компонентҳо асоси системаи дизайн (Design System) мебошанд"
-            ]
-        },
-        5: {
-            "title": "Prototype",
-            "time": "15 дақиқа",
-            "intro": "Prototype mode lets you connect frames using triggers, transitions, and hover states to simulate how your app will actually work.",
-            "objectives": [
-                "Фреймҳоро тавассути interaction пайваст кунед",
-                "Намудҳои trigger (click, hover, drag)-ро фаҳмед",
-                "Тарзи ҳаракати намунавии барномаро сохта тавонед"
-            ],
-            "takeaways": [
-                "Prototype барои нишон додани идея ба мизоҷ хеле муфид аст",
-                "Transition-ҳо ҳаракатро табиитар месозанд",
-                "Presentation mode барои санҷиши прототип истифода мешавад"
-            ]
-        },
-        6: {
-            "title": "Shapes & Pen Tool",
-            "time": "14 дақиқа",
-            "intro": "Master vector editing with boolean groups (Union, Subtract, Intersect) to create custom icons and illustrations.",
-            "objectives": [
-                "Бо Pen tool шаклҳои дилхоҳ сохта тавонед",
-                "Амалиёти Boolean (Union, Subtract, Intersect)-ро фаҳмед",
-                "Icon-и худиатонро сохта тавонед"
-            ],
-            "takeaways": [
-                "Vector shape-ҳо бе гум кардани сифат калон мешаванд",
-                "Boolean groups якчанд shape-ро ба як шакли нав табдил медиҳанд",
-                "Pen tool ниёз ба тамрин дорад, вале хеле пурқувват аст"
-            ]
-        },
-        7: {
-            "title": "Text & Typography",
-            "time": "10 дақиқа",
-            "intro": "Work with Google Fonts, line-height, letter spacing, and reusable text styles to keep your typography consistent.",
-            "objectives": [
-                "Font, line-height ва letter-spacing-ро танзим кунед",
-                "Text style-и истифодашавандаро эҷод кунед",
-                "Иерархияи матниро (h1, h2, body) фаҳмед"
-            ],
-            "takeaways": [
-                "Text style монанди компонент — тағйирот дар ҳама ҷо инъикос меёбад",
-                "Line-height хониши матнро беҳтар мекунад",
-                "Истифодаи на бештар аз 2 font дар як лоиҳа тавсия мешавад"
-            ]
-        },
-        8: {
-            "title": "Auto Layout Basics",
-            "time": "15 дақиқа",
-            "intro": "Build auto-resizing buttons, lists, and dynamic card layouts using Auto Layout — Figma's most powerful feature for responsive design.",
-            "objectives": [
-                "Auto Layout-ро ба frame илова кунед",
-                "Padding ва spacing-ро танзим кунед",
-                "Card ё button-и худкор-андозашавандаро сохта тавонед"
-            ],
-            "takeaways": [
-                "Auto Layout вақти дизайнро назаррас кам мекунад",
-                "Тағйир додани матн андозаи элементро худкор иваз мекунад",
-                "Ин асоси responsive design дар Figma аст"
-            ]
-        },
-        9: {
-            "title": "Colors & Styles",
-            "time": "12 дақиқа",
-            "intro": "Create color variables, gradients, and layer styles to maintain visual consistency across your entire design system.",
-            "objectives": [
-                "Color style-и истифодашавандаро эҷод кунед",
-                "Gradient ва shadow-ро танзим кунед",
-                "Палитаи рангии мутобиқро созед"
-            ],
-            "takeaways": [
-                "Color style-ҳо тағйир додани ранги брендро осон мекунанд",
-                "Shadow-ҳо ба элементҳо чуқурӣ (depth) медиҳанд",
-                "Палитаи маҳдуд дизайнро касбитар нишон медиҳад"
-            ]
-        },
-        10: {
-            "title": "Exporting Assets",
-            "time": "10 дақиқа",
-            "intro": "Export PNG, SVG, JPG, and PDF assets, and prepare clean developer handoff specs for your engineering team.",
-            "objectives": [
-                "Формати дурусти export (PNG/SVG/PDF)-ро интихоб кунед",
-                "Assets-ро бо резолюсияи гуногун (1x, 2x, 3x) содир кунед",
-                "Handoff барои dev team-ро омода кунед"
-            ],
-            "takeaways": [
-                "SVG барои icon беҳтарин интихоб аст (scalable)",
-                "PNG барои тасвирҳои мураккаб бо шаффофӣ мувофиқ аст",
-                "Dev Mode-и Figma ба муҳандисон CSS/spacing медиҳад"
-            ]
-        },
-        11: {
-            "title": "Advanced Prototyping",
-            "time": "16 дақиқа",
-            "intro": "Use Smart Animate, drag triggers, and interactive component states to build prototypes that feel like a real app.",
-            "objectives": [
-                "Smart Animate-ро байни ду frame татбиқ кунед",
-                "Drag trigger-ро барои swipe/scroll истифода баред",
-                "Interactive component (масалан checkbox, toggle)-ро созед"
-            ],
-            "takeaways": [
-                "Smart Animate ба object-ҳои ҳамном автоматан animation медиҳад",
-                "Overlay барои modal ва menu истифода мешавад",
-                "Прототипи хуб бовариро назди мизоҷ баланд мекунад"
-            ]
-        },
-        12: {
-            "title": "Design Systems",
-            "time": "18 дақиқа",
-            "intro": "Organize variant properties, design tokens, and shared team libraries to scale your design work across a whole product.",
-            "objectives": [
-                "Component variant-ро сохта тавонед",
-                "Design token (ранг, андоза, spacing)-ро ташкил кунед",
-                "Library-и дастаҷамъиро дар лоиҳа паҳн кунед"
-            ],
-            "takeaways": [
-                "Design System вақти такрории дизайнро кам мекунад",
-                "Variant якчанд ҳолати як компонентро дар як ҷо ҷамъ мекунад",
-                "Team library имкон медиҳад ҳамаи аъзоён як манбаъ истифода баранд"
-            ]
-        },
-        13: {
-            "title": "UI Animation",
-            "time": "14 дақиқа",
-            "intro": "Animate loader buttons, toggle switches, and page transitions to bring micro-interactions and motion design to your UI.",
-            "objectives": [
-                "Micro-interaction чист, фаҳмед",
-                "Animation-и loader ва toggle-ро сохта тавонед",
-                "Transition-ҳои саҳифаро мулоим кунед"
-            ],
-            "takeaways": [
-                "Micro-interaction-ҳо таҷрибаи корбарро зинда мекунанд",
-                "Animation набояд аз ҳад зиёд тӯл кашад (150–300ms беҳтарин)",
-                "Easing (ease-in-out) ҳаракатро табиитар месозад"
-            ]
-        },
-        14: {
-            "title": "Responsive Layouts",
-            "time": "16 дақиқа",
-            "intro": "Use constraints, Auto Layout wrapping, and breakpoints to design screens that adapt across Mobile, Tablet, and Desktop.",
-            "objectives": [
-                "Constraint (pin ба чап/рост/боло/поён)-ро истифода баред",
-                "Breakpoint барои андозаҳои гуногуни экран муайян кунед",
-                "Тарҳро барои мобил ва десктоп мутобиқ созед"
-            ],
-            "takeaways": [
-                "Constraints муайян мекунад, ки чӣ тавр элемент ҳангоми resize рафтор мекунад",
-                "Design mobile-first одатан осонтар аст",
-                "Auto Layout wrapping ба тарҳҳои responsive кӯмак мекунад"
-            ]
-        },
-        15: {
-            "title": "Final Portfolio Project",
-            "time": "30+ дақиқа",
-            "intro": "Combine everything you've learned to design a complete, multi-screen mobile app UI — ready for your portfolio.",
-            "objectives": [
-                "Ҳамаи малакаҳои омӯхтаро дар як лоиҳа истифода баред",
-                "Аз идея то прототипи интерактивӣ пеш биравед",
-                "Лоиҳаро барои portfolio омода кунед"
-            ],
-            "takeaways": [
-                "Лоиҳаи portfolio беҳтарин роҳи нишон додани малака ба корфармост",
-                "Мунтазам feedback гирифтан лоиҳаро беҳтар мекунад",
-                "Ҳатто лоиҳаи хурд, агар пурра анҷом ёбад, арзишманд аст"
-            ]
-        }
-    }
-    selected_lesson = lessons.get(lesson_id)
-    if not selected_lesson:
-        return redirect(url_for("dashboard"))
-    return render_template("lesson.html", lesson=selected_lesson)
- 
- 
-# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
  
  
-# ---------------- SHOW USERS ----------------
-@app.route("/users")
+# ---------------------------------------------------------
+# Lesson content
+# ---------------------------------------------------------
+LESSONS = {
+    1: {
+        "title": "What is Figma?",
+        "description": "Introduction to Figma and cloud-based design.",
+        "time": "10 min",
+        "intro": "Figma is a cloud-based UI/UX design and prototyping tool used by teams around the world to design apps and websites collaboratively in real time.",
+        "objectives": [
+            "Explain what Figma is and what it's used for",
+            "Understand how it differs from tools like Photoshop",
+            "Get familiar with the main Figma interface",
+        ],
+        "takeaways": [
+            "Figma runs in the browser — no installation needed",
+            "Multiple people can work in the same file at the same time",
+            "Files are saved automatically to the cloud",
+        ],
+    },
+    2: {
+        "title": "Figma Tools",
+        "description": "Overview of essential UI elements and toolbars.",
+        "time": "12 min",
+        "intro": "Learn the essential toolbar: Move, Scale, Frame, Section, Shape, Pen, and Text tools that form the foundation of every design.",
+        "objectives": [
+            "Name the core toolbar tools",
+            "Understand the difference between Move and Scale",
+            "Know when to use each tool",
+        ],
+        "takeaways": [
+            "Every tool has a keyboard shortcut — learning them speeds up your workflow",
+            "The Frame tool is the foundation for building screens",
+            "The Pen tool is used for more complex custom shapes",
+        ],
+    },
+    3: {
+        "title": "Frame and Layout",
+        "description": "Organize screens and device templates effectively.",
+        "time": "12 min",
+        "intro": "Frames act as screen containers that organize your design and let you build responsive layouts for different device sizes.",
+        "objectives": [
+            "Understand the difference between a Frame and a Group",
+            "Know standard device sizes (mobile, tablet, desktop)",
+            "Organize screen layouts cleanly",
+        ],
+        "takeaways": [
+            "A Frame can contain other Frames inside it",
+            "Presets exist for the most common screen sizes",
+            "Naming frames clearly makes team collaboration easier",
+        ],
+    },
+    4: {
+        "title": "Components",
+        "description": "Create reusable design assets and UI kits.",
+        "time": "15 min",
+        "intro": "Components let you create reusable design elements — build once, use everywhere, and update all instances at the same time.",
+        "objectives": [
+            "Understand the difference between a Main Component and an Instance",
+            "Create a reusable component",
+            "Update one place and see it reflect everywhere",
+        ],
+        "takeaways": [
+            "Changes to the main component affect all instances",
+            "Instances can be customized without breaking the main component",
+            "Components are the foundation of any design system",
+        ],
+    },
+    5: {
+        "title": "Prototype",
+        "description": "Learn how to make your design interactive.",
+        "time": "15 min",
+        "intro": "Prototype mode lets you connect frames using triggers, transitions, and hover states to simulate how your app will actually work.",
+        "objectives": [
+            "Connect frames together using interactions",
+            "Understand trigger types (click, hover, drag)",
+            "Build a working click-through prototype",
+        ],
+        "takeaways": [
+            "Prototypes are great for presenting ideas to clients",
+            "Transitions make interactions feel more natural",
+            "Presentation mode is used to test the prototype",
+        ],
+    },
+    6: {
+        "title": "Shapes & Pen Tool",
+        "description": "Create custom vector graphics and icons.",
+        "time": "14 min",
+        "intro": "Master vector editing with boolean groups (Union, Subtract, Intersect) to create custom icons and illustrations.",
+        "objectives": [
+            "Draw custom shapes with the Pen tool",
+            "Understand boolean operations (Union, Subtract, Intersect)",
+            "Create your own custom icon",
+        ],
+        "takeaways": [
+            "Vector shapes scale up without losing quality",
+            "Boolean groups combine multiple shapes into one new shape",
+            "The Pen tool takes practice but is very powerful",
+        ],
+    },
+    7: {
+        "title": "Text & Typography",
+        "description": "Work with fonts, line heights, and text styles.",
+        "time": "10 min",
+        "intro": "Work with Google Fonts, line-height, letter spacing, and reusable text styles to keep your typography consistent.",
+        "objectives": [
+            "Adjust font, line-height, and letter-spacing",
+            "Create a reusable text style",
+            "Understand text hierarchy (h1, h2, body)",
+        ],
+        "takeaways": [
+            "Text styles work like components — one change updates everywhere",
+            "Good line-height improves readability",
+            "Using no more than 2 fonts per project is recommended",
+        ],
+    },
+    8: {
+        "title": "Auto Layout Basics",
+        "description": "Build dynamic, flexible responsive UI components.",
+        "time": "15 min",
+        "intro": "Build auto-resizing buttons, lists, and dynamic card layouts using Auto Layout — Figma's most powerful feature for responsive design.",
+        "objectives": [
+            "Apply Auto Layout to a frame",
+            "Adjust padding and spacing",
+            "Build a self-resizing card or button",
+        ],
+        "takeaways": [
+            "Auto Layout drastically reduces design time",
+            "Changing text automatically resizes the element",
+            "It's the foundation of responsive design in Figma",
+        ],
+    },
+    9: {
+        "title": "Colors & Styles",
+        "description": "Manage global design system colors and shadows.",
+        "time": "12 min",
+        "intro": "Create color variables, gradients, and layer styles to maintain visual consistency across your entire design system.",
+        "objectives": [
+            "Create a reusable color style",
+            "Configure gradients and shadows",
+            "Build a consistent color palette",
+        ],
+        "takeaways": [
+            "Color styles make rebranding a project much easier",
+            "Shadows add depth to elements",
+            "A limited palette makes a design look more professional",
+        ],
+    },
+    10: {
+        "title": "Exporting Assets",
+        "description": "Export assets and prepare design for developers.",
+        "time": "10 min",
+        "intro": "Export PNG, SVG, JPG, and PDF assets, and prepare clean developer handoff specs for your engineering team.",
+        "objectives": [
+            "Choose the right export format (PNG/SVG/PDF)",
+            "Export assets at multiple resolutions (1x, 2x, 3x)",
+            "Prepare a clean developer handoff",
+        ],
+        "takeaways": [
+            "SVG is the best choice for icons (fully scalable)",
+            "PNG is best for complex images that need transparency",
+            "Figma's Dev Mode gives engineers CSS and spacing values",
+        ],
+    },
+    11: {
+        "title": "Advanced Prototyping",
+        "description": "Smart animate, interactive overlays, and scrolling.",
+        "time": "16 min",
+        "intro": "Use Smart Animate, drag triggers, and interactive component states to build prototypes that feel like a real app.",
+        "objectives": [
+            "Apply Smart Animate between two frames",
+            "Use drag triggers for swipe/scroll interactions",
+            "Build interactive components (e.g. checkbox, toggle)",
+        ],
+        "takeaways": [
+            "Smart Animate automatically animates matching objects",
+            "Overlays are used for modals and menus",
+            "A polished prototype builds more trust with clients",
+        ],
+    },
+    12: {
+        "title": "Design Systems",
+        "description": "Building and publishing Figma library UI components.",
+        "time": "18 min",
+        "intro": "Organize variant properties, design tokens, and shared team libraries to scale your design work across a whole product.",
+        "objectives": [
+            "Build component variants",
+            "Organize design tokens (color, size, spacing)",
+            "Publish a shared library across a project",
+        ],
+        "takeaways": [
+            "A design system reduces repetitive design work",
+            "Variants group multiple states of one component together",
+            "Team libraries let everyone work from a single source of truth",
+        ],
+    },
+    13: {
+        "title": "UI Animation",
+        "description": "Micro-interactions and motion design in Figma.",
+        "time": "14 min",
+        "intro": "Animate loader buttons, toggle switches, and page transitions to bring micro-interactions and motion design to your UI.",
+        "objectives": [
+            "Understand what a micro-interaction is",
+            "Animate a loader or toggle switch",
+            "Smooth out page transitions",
+        ],
+        "takeaways": [
+            "Micro-interactions make the user experience feel alive",
+            "Animations shouldn't be too long (150–300ms is ideal)",
+            "Easing (ease-in-out) makes motion feel natural",
+        ],
+    },
+    14: {
+        "title": "Responsive Layouts",
+        "description": "Designing for Mobile, Tablet, and Desktop screens.",
+        "time": "16 min",
+        "intro": "Use constraints, Auto Layout wrapping, and breakpoints to design screens that adapt across Mobile, Tablet, and Desktop.",
+        "objectives": [
+            "Use constraints (pin left/right/top/bottom)",
+            "Define breakpoints for different screen sizes",
+            "Adapt a layout for both mobile and desktop",
+        ],
+        "takeaways": [
+            "Constraints define how an element behaves when resized",
+            "Designing mobile-first is usually easier",
+            "Auto Layout wrapping helps build responsive layouts",
+        ],
+    },
+    15: {
+        "title": "Final Portfolio Project",
+        "description": "Creating a complete real-world mobile app UI design.",
+        "time": "30+ min",
+        "intro": "Combine everything you've learned to design a complete, multi-screen mobile app UI — ready for your portfolio.",
+        "objectives": [
+            "Apply everything you've learned in one project",
+            "Go from idea to interactive prototype",
+            "Prepare the project for your portfolio",
+        ],
+        "takeaways": [
+            "A portfolio project is the best way to show your skills to employers",
+            "Getting regular feedback improves the final result",
+            "Even a small project, if finished well, has real value",
+        ],
+    },
+}
+ 
+ 
+# ---------------------------------------------------------
+# App routes
+# ---------------------------------------------------------
+@app.route("/dashboard")
 @login_required
+def dashboard():
+    lessons = [
+        {"id": lid, "title": l["title"], "description": l["description"]}
+        for lid, l in LESSONS.items()
+    ]
+    return render_template(
+        "dashboard.html", lessons=lessons, user_name=session["user_name"]
+    )
+ 
+ 
+@app.route("/lesson/<int:lesson_id>")
+@login_required
+def lesson(lesson_id):
+    selected_lesson = LESSONS.get(lesson_id)
+    if not selected_lesson:
+        return redirect(url_for("dashboard"))
+    return render_template("lesson.html", lesson=selected_lesson)
+ 
+ 
+# ---------------------------------------------------------
+# Admin-only route — only ADMIN_USERNAME can view registered users
+# ---------------------------------------------------------
+@app.route("/users")
+@admin_required
 def show_users():
     users_list = User.query.order_by(User.id.desc()).all()
     return render_template("users.html", users=users_list)
  
  
-# ---------------- RUN LOCAL ----------------
 if __name__ == "__main__":
     app.run(debug=True)
  

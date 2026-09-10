@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tj">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,9 +19,9 @@
     <main class="lesson-page">
         <div class="lesson-box">
             <div class="lesson-media">
-                <img src="{{ url_for('static', filename='xeb.jpg') }}" alt="Дарс" class="lesson-img">
+                <img src="{{ url_for('static', filename='xeb.jpg') }}" alt="Lesson" class="lesson-img">
             </div>
-            
+ 
             <div class="lesson-content">
                 <h1>{{ lesson.title }}</h1>
                 <p class="lesson-time">⏱ {{ lesson.time }}</p>
@@ -31,7 +31,7 @@
                 </div>
  
                 <div class="lesson-section">
-                    <h2>🎯 Ҳадафҳои омӯзиш</h2>
+                    <h2>🎯 Learning Objectives</h2>
                     <ul>
                         {% for obj in lesson.objectives %}
                         <li>{{ obj }}</li>
@@ -39,20 +39,3 @@
                     </ul>
                 </div>
  
-                <div class="lesson-section">
-                    <h2>✅ Хулосаҳои асосӣ</h2>
-                    <ul>
-                        {% for point in lesson.takeaways %}
-                        <li>{{ point }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
- 
-                <div class="lesson-footer">
-                    <a href="{{ url_for('dashboard') }}" class="btn-back-main">← Бозгашт ба дарсҳо</a>
-                </div>
-            </div>
-        </div>
-    </main>
-</body>
-</html>

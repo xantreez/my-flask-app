@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="tj">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сабти ном</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="card">
-        <h2>Рӯйхатгирӣ</h2>
-        <p class="subtitle">Ҳисоби нав эҷод кунед</p>
-        
+        <h2>Create Account</h2>
+        <p class="subtitle">Start your Figma / Python course today</p>
+ 
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             {% for message in messages %}
@@ -18,21 +18,21 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-
-        <form action="/register" method="POST">
+ 
+        <form action="{{ url_for('register') }}" method="POST">
             <div class="input-group">
                 <input type="text" name="username" required placeholder=" " autocomplete="off">
-                <label>Username (Номи корбар)</label>
+                <label>Username</label>
             </div>
             <div class="input-group">
                 <input type="password" name="password" required placeholder=" ">
                 <label>Password</label>
             </div>
-            <button type="submit" class="btn">Рӯйхатгирӣ</button>
+            <button type="submit" class="btn">Sign Up</button>
         </form>
-
+ 
         <p class="footer-text">
-            Аккаунт доред? <a href="{{ url_for('login') }}">Login</a>
+            Already have an account? <a href="{{ url_for('login') }}">Log in</a>
         </p>
     </div>
 </body>

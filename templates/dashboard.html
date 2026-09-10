@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tj">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Курсҳо</title>
+    <title>Dashboard - Courses</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -12,26 +12,26 @@
             <h2>Figma / Python Course</h2>
         </div>
         <div class="nav-links">
-            <a href="{{ url_for('show_users') }}" class="nav-btn-back" style="margin-right: 12px;">👥 Корбарон</a>
-            <a href="{{ url_for('logout') }}" class="nav-btn-logout">Баромад</a>
+            <a href="{{ url_for('show_users') }}" class="nav-btn-back" style="margin-right: 12px;">👥 Users</a>
+            <a href="{{ url_for('logout') }}" class="nav-btn-logout">Log Out</a>
         </div>
     </nav>
  
     <main class="dashboard-container">
         <header class="dashboard-header">
-            <h1>Хуш омадед, {{ user_name }}! 👋</h1>
-            <p>Дарсҳоро интихоб кунед ва ба омӯзиш оғоз намоед.</p>
+            <h1>Welcome, {{ user_name }}! 👋</h1>
+            <p>Pick a lesson and start learning.</p>
         </header>
  
         <div class="lessons-grid">
             {% for lesson in lessons %}
             <div class="lesson-card">
                 <div>
-                    <div class="badge">Дарси {{ lesson.id }}</div>
+                    <div class="badge">Lesson {{ lesson.id }}</div>
                     <h3>{{ lesson.title }}</h3>
                     <p>{{ lesson.description }}</p>
                 </div>
-                <a href="{{ url_for('lesson', lesson_id=lesson.id) }}" class="btn-card">Гузаштан ба дарс →</a>
+                <a href="{{ url_for('lesson', lesson_id=lesson.id) }}" class="btn-card">Start Lesson →</a>
             </div>
             {% endfor %}
         </div>

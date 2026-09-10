@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tj">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рӯйхати корбарон</title>
+    <title>Registered Users</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .users-page {
@@ -91,16 +91,16 @@
  
     <main class="users-page">
         <div class="users-box">
-            <h1>👥 Рӯйхати корбарон</h1>
-            <p class="users-count">Ҳамагӣ {{ users|length }} корбар сабти ном кардааст</p>
+            <h1>👥 Registered Users</h1>
+            <p class="users-count">{{ users|length }} user(s) registered</p>
  
             {% if users|length > 0 %}
-            <input type="text" class="search-box" id="searchInput" placeholder="Ҷустуҷӯи корбар...">
+            <input type="text" class="search-box" id="searchInput" placeholder="Search users...">
             <table id="usersTable">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Username / Email</th>
+                        <th>Username</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -113,7 +113,7 @@
                 </tbody>
             </table>
             {% else %}
-            <div class="empty-state">Ҳанӯз ҳеҷ кас сабти ном накардааст.</div>
+            <div class="empty-state">No one has registered yet.</div>
             {% endif %}
         </div>
     </main>
