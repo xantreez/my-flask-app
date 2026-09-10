@@ -15,7 +15,7 @@
             <a href="{{ url_for('dashboard') }}" class="nav-btn-back">← Dashboard</a>
         </div>
     </nav>
-
+ 
     <main class="lesson-page">
         <div class="lesson-box">
             <div class="lesson-media">
@@ -24,11 +24,30 @@
             
             <div class="lesson-content">
                 <h1>{{ lesson.title }}</h1>
+                <p class="lesson-time">⏱ {{ lesson.time }}</p>
                 <hr class="divider">
                 <div class="lesson-text">
-                    <p>{{ lesson.content }}</p>
+                    <p>{{ lesson.intro }}</p>
                 </div>
-                
+ 
+                <div class="lesson-section">
+                    <h2>🎯 Ҳадафҳои омӯзиш</h2>
+                    <ul>
+                        {% for obj in lesson.objectives %}
+                        <li>{{ obj }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+ 
+                <div class="lesson-section">
+                    <h2>✅ Хулосаҳои асосӣ</h2>
+                    <ul>
+                        {% for point in lesson.takeaways %}
+                        <li>{{ point }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+ 
                 <div class="lesson-footer">
                     <a href="{{ url_for('dashboard') }}" class="btn-back-main">← Бозгашт ба дарсҳо</a>
                 </div>

@@ -342,6 +342,46 @@ body {
     margin-bottom: 30px;
 }
  
+.lesson-time {
+    color: var(--accent-1);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+ 
+.lesson-section {
+    margin-bottom: 28px;
+}
+ 
+.lesson-section h2 {
+    font-size: 18px;
+    color: var(--text-dark);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+ 
+.lesson-section ul {
+    list-style: none;
+    padding: 0;
+}
+ 
+.lesson-section li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 10px;
+    color: #334155;
+    font-size: 15px;
+    line-height: 1.6;
+}
+ 
+.lesson-section li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--accent-1);
+    font-weight: 700;
+}
+ 
 .lesson-footer {
     border-top: 1px solid #edf2f7;
     padding-top: 20px;
@@ -370,4 +410,3 @@ body {
     from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
 }
- 
